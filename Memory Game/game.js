@@ -1,5 +1,3 @@
-
-
 const selectors = {
     boardContainer: document.querySelector('.board-container'),
     board: document.querySelector('.board'),
@@ -7,7 +5,7 @@ const selectors = {
     timer: document.querySelector('.timer'),
     start: document.querySelector('button'),
     win: document.querySelector('.win'),
-    nextLevel: document.querySelector('#nextLevel')
+    winningPopUp: document.querySelector('#winningPopUp')
 }
 
 const state = {
@@ -93,26 +91,32 @@ const flipBackCards = () => {
 }
 
 const flipCard = card => {
+    
+
     state.flippedCards++
     state.totalFlips++
 
     if (!state.gameStarted) {
         startGame()
     }
-
+    
     if (state.flippedCards <= 2) {
         card.classList.add('flipped')
     }
 
     if (state.flippedCards === 2) {
-        const flippedCards = document.querySelectorAll('.flipped:not(.matched)')
-
-        if (flippedCards[0].innerText === flippedCards[1].innerText) {
-            flippedCards[0].classList.add('matched')
-            flippedCards[1].classList.add('matched')
+        const flippedCards = document.querySelectorAll('.card.flipped:not(.matched)')
+        const numberClicked = flippedCards.length;
+        
+        if (numberClicked > 1) {
+            if (flippedCards[0].innerText === flippedCards[1].innerText) {
+                flippedCards[0].classList.add('matched')
+                flippedCards[1].classList.add('matched')
+            }
         }
 
         setTimeout(() => {
+            console.log('called');
             flipBackCards()
         }, 1000)
     }
@@ -123,18 +127,21 @@ const flipCard = card => {
             selectors.boardContainer.classList.add('flipped')
             selectors.win.innerHTML = `
                 <span class="win-text">
-                    You won!<br />
-                    with <span class="highlight">${state.totalFlips}</span> moves<br />
-                    under <span class="highlight">${state.totalTime}</span> seconds
+                    <h1>Congratulations</h1>
+                    <h6>You got them all!</h6>
+                    <p>
+                        with <span class="highlight">${state.totalFlips}</span> moves<br />
+                        under <span class="highlight">${state.totalTime}</span> seconds
+                    </p>
                 </span>
             `
 
             clearInterval(state.loop)
-            if (selectors.nextLevel != null) {
-                selectors.nextLevel.style.display = "block";
-            }
+            selectors.winningPopUp.style.display = "flex";
+
         }, 1000)
     }
+    
 }
 
 const attachEventListeners = () => {
